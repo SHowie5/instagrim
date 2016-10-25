@@ -18,6 +18,7 @@ public final class Keyspaces {
             String CreatePicTable = "CREATE TABLE if not exists instagrim.Pics ("
                     + " user varchar,"
                     + " picid uuid, "
+                    + "comments set<text>,\n"
                     + " interaction_time timestamp,"
                     + " title varchar,"
                     + " image blob,"
@@ -47,6 +48,7 @@ public final class Keyspaces {
                     + "      first_name text,\n"
                     + "      last_name text,\n"
                     + "      email set<text>,\n"
+                    + "      profile_pic uuid,\n"
                     + "      addresses  map<text, frozen <address>>\n"
                     + "  );";
             Session session = c.connect();

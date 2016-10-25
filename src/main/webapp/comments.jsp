@@ -1,9 +1,3 @@
-<%-- 
-    Document   : UsersPics
-    Created on : Sep 24, 2014, 2:52:48 PM
-    Author     : Administrator
---%>
-
 <%@page import="java.util.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
@@ -20,48 +14,45 @@
         <h1>InstaGrim ! </h1>
         <h2>Your world in Black and White</h2>
         </header>
+        <% String id = request.getParameter("pictureID"); %>
+        <img src="/Instagrim/Thumb/<%=id%>" height="150" width="150">
+        <h1>Comments Page</h1>
             <%
-                        
                 LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
                 String username = lg.getUsername();
             %>
+            <form method="POST" action="/Instagrim/Comments/">
+                <input type="text" placeholder="Enter comment here" maxlength="100" name="comment">
+                <input type="hidden" value="<%=id%>" name="picid">
+                <input type="submit" value="Post Comment">
+            </form>
         <nav>
-            <ul>
+            <ul> 
                 <li class="nav"><a href="/Instagrim">Home</a></li>
                 <li class="nav"><a href="/Instagrim/Profile/<%=username%>">My Profile</a></li>
+                <li class="nav"><a href="/Instagrim/Images/<%=username%>">Your Pics</a></li>
                 <li class="nav"><a href="/Instagrim/upload.jsp">Upload</a></li>
                 <form action="${pageContext.request.contextPath}/Logout" method="POST">
                 <li><input type="submit" value="Logout"</li>
-                </form>
+                 </form>
             </ul>
         </nav>
  
         <article>
-            <h1>Your Pics</h1>
-        <%
-            java.util.LinkedList<Pic> lsPics = (java.util.LinkedList<Pic>) request.getAttribute("Pics");
-            if (lsPics == null) {
-        %>
-        <p>No Pictures found</p>
-        <%
-        } else {
-            Iterator<Pic> iterator;
-            iterator = lsPics.iterator();
-            while (iterator.hasNext()) {
-                Pic p = (Pic) iterator.next();
-        %>
-        <form action="/Instagrim/Comments/<%=p.getSUUID()%>">
-           <input type="hidden" value="<%=p.getSUUID()%>" name="pictureID">
-           <input type="image" src="/Instagrim/Thumb/<%=p.getSUUID()%>" alt="Submit">
-        </form>
-        <form method="POST" action="/Instagrim/ProfilePic/<%=lg.getUsername()%>">
-            <input type="submit" value="Set as Profile Picture">
-            <input type="hidden" value="<%=p.getSUUID()%>" name="picid">
-        </form>
-        <%
-            }
-            }
-        %>
+            <h1><%=username.toUpperCase()%></h1>
         </article>
+        <%
+            Set<String> comments = (Set) request.getAttribute("Comms");
+            if (comments == null) {
+        %>
+        <p>No comments found</p>
+        <%
+            } else {
+            for (String c : comments) {
+            %><p><%=c%></p></br><%
+                }
+            }   
+        %>
+
     </body>
 </html>

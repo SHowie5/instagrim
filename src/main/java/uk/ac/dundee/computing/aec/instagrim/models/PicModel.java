@@ -29,12 +29,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.UUID;
 import javax.imageio.ImageIO;
 import static org.imgscalr.Scalr.*;
 import org.imgscalr.Scalr.Method;
 
 import uk.ac.dundee.computing.aec.instagrim.lib.*;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 //import uk.ac.dundee.computing.aec.stores.TweetStore;
 
@@ -49,6 +53,69 @@ public class PicModel {
     public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }
+    public void setComments(String picid, String comment){
+        UUID id = UUID.fromString(picid);
+        Set comments = new HashSet();
+        comments.add(comment);
+        Session session = cluster.connect("instagrim");
+        PreparedStatement ps = session.prepare("update Pics set comments = comments+? WHERE picid =?");
+        ResultSet rs = null;
+        BoundStatement bs = new BoundStatement(ps);
+        rs = session.execute(bs.bind(comments,id));
+        System.out.println(comments + "Comment added");
+        session.close();
+    }
+    
+    public Set<String> getPicComments(String picid){
+        UUID id = UUID.fromString(picid);
+        Set<String> getComments = new HashSet<String>();
+        Session session = cluster.connect("instagrim");
+        PreparedStatement ps = session.prepare("select comments from Pics where picid =?");
+        ResultSet rs = null;
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute( // this is where the query is executed
+                boundStatement.bind( // here you are binding the 'boundStatement'
+                        id));
+        if (rs.isExhausted()) {
+            System.out.println("No  returned");
+            return null;
+        } else {
+            for (Row row : rs) {
+                getComments = row.getSet("comments",String.class);
+            }
+        }
+        session.close();
+        return getComments;
+    }
+    public String getProfilePic(String username){
+        String ppid=null;
+        Session session = cluster.connect("instagrim");
+        PreparedStatement ps = session.prepare("select profile_pic from userprofiles where login =?");
+        ResultSet rs = null;
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute(boundStatement.bind(username));
+        if (rs.isExhausted()) {
+            System.out.println("No picture found");
+            return null;
+        } else {
+            for (Row row : rs) {
+             UUID picid = row.getUUID("profile_pic");
+             ppid = picid.toString();
+             System.out.println("UUID" + picid);
+            }
+        }
+        session.close();
+        return ppid;         
+    }
+    public void setProfilePic(String username,String picid){
+    	UUID uuid=UUID.fromString(picid);
+    	Session session = cluster.connect("instagrim");
+        PreparedStatement ps = session.prepare("update userprofiles set profile_pic=? where login=?");
+        session.execute(ps.bind(uuid,username));
+        session.close();
+    }
+    
+    
 
     public void insertPic(byte[] b, String type, String name, String user) {
         try {
@@ -148,7 +215,7 @@ public class PicModel {
             for (Row row : rs) {
                 Pic pic = new Pic();
                 java.util.UUID UUID = row.getUUID("picid");
-                System.out.println("UUID" + UUID.toString());
+                //System.out.println("UUID" + UUID.toString());
                 pic.setUUID(UUID);
                 Pics.add(pic);
 

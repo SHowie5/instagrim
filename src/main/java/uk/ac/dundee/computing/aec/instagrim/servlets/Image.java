@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,6 +26,7 @@ import org.apache.commons.fileupload.util.Streams;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.models.User;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -36,7 +38,9 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
     "/Image/*",
     "/Thumb/*",
     "/Images",
-    "/Images/*"
+    "/Images/*",
+    "/Profile/",
+    "/Profile/*",
 })
 @MultipartConfig
 
@@ -57,7 +61,7 @@ public class Image extends HttpServlet {
         CommandsMap.put("Image", 1);
         CommandsMap.put("Images", 2);
         CommandsMap.put("Thumb", 3);
-
+        CommandsMap.put("Profile", 4);
     }
 
     public void init(ServletConfig config) throws ServletException {
@@ -89,11 +93,31 @@ public class Image extends HttpServlet {
             case 3:
                 DisplayImage(Convertors.DISPLAY_THUMB,args[2],  response);
                 break;
+            case 4:
+                DisplayProfilePic(args[2], request, response);
+                break;
             default:
-                error("Bad Operator", response);
+                error("Bad Operator", response);      
         }
     }
 
+    private void DisplayProfilePic(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        PicModel pm = new PicModel();
+        User us = new User();
+        pm.setCluster(cluster);
+        us.setCluster(cluster);
+        String profilePic = pm.getProfilePic(User);
+        String fname = us.getFirstname(User);
+        String lname = us.getLastname(User);
+        Set<String> email = us.getEmail(User);
+        request.setAttribute("PPID", profilePic);
+        request.setAttribute("fname", fname);
+        request.setAttribute("lname", lname);
+        request.setAttribute("emails", email);
+        RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
+        rd.forward(request, response);
+    }
+    
     private void DisplayImageList(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
@@ -103,7 +127,7 @@ public class Image extends HttpServlet {
         rd.forward(request, response);
 
     }
-
+    
     private void DisplayImage(int type,String Image, HttpServletResponse response) throws ServletException, IOException {
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
@@ -124,6 +148,8 @@ public class Image extends HttpServlet {
         }
         out.close();
     }
+    
+    
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         for (Part part : request.getParts()) {
@@ -151,7 +177,7 @@ public class Image extends HttpServlet {
                 is.close();
             }
             RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
-             rd.forward(request, response);
+            rd.forward(request, response);
         }
 
     }

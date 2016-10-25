@@ -18,9 +18,18 @@ public class Pic {
     private int length;
     private String type;
     private java.util.UUID UUID=null;
+    private String profileID = null;
     
     public void Pic() {
 
+    }
+    
+    public void setProfileID(String profileID){
+        this.profileID = profileID;
+    }
+    
+    public String getProfileID(){
+        return profileID;
     }
     public void setUUID(java.util.UUID UUID){
         this.UUID =UUID;

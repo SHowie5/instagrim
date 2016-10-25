@@ -28,11 +28,14 @@
             <h3>Register as user</h3>
             <form method="POST"  action="Register">
                 <ul>
-                    <li>User Name <input type="text" name="username"></li>
-                    <li>Password <input type="password" name="password"></li>
+                    <li>User Name: <input type="text" name="username" required></li>
+                    <li>First Name: <input type="text" name="fname" required></li>
+                    <li>Last Name: <input type="text" name="lname" required></li>
+                    <li>Email: <input type="text" name="email" required></li>
+                    <li>Password: <input type="password" name="password" required></li>
                 </ul>
                 <br/>
-                <input type="submit" value="Regidter"> 
+                <input type="submit" value="Register"> 
             </form>
 
         </article>

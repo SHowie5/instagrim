@@ -13,6 +13,9 @@ package uk.ac.dundee.computing.aec.instagrim.stores;
 public class LoggedIn {
     boolean logedin=false;
     String Username=null;
+    String firstName=null;
+    String lastName=null;
+    String email=null;
     public void LogedIn(){
         
     }
@@ -23,6 +26,31 @@ public class LoggedIn {
     public String getUsername(){
         return Username;
     }
+    
+    public void setFirstName(String fname){
+        this.firstName=fname;
+    }
+    
+    public String getFirstName(){
+        return firstName;
+    }
+    
+    public void setLastName(String lname){
+        this.lastName=lname;
+    }
+    
+    public String getLastName(){
+        return lastName;
+    }
+
+    public void setEmail(String email){
+        this.email=email;
+    }
+    
+    public String getEmail(){
+        return email;
+    }
+    
     public void setLogedin(){
         logedin=true;
     }
@@ -36,4 +64,6 @@ public class LoggedIn {
     public boolean getlogedin(){
         return logedin;
     }
+    
+    
 }

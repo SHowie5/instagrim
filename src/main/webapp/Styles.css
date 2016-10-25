@@ -8,7 +8,9 @@ and open the template in the editor.
     Author     : Administrator
 */
 
-
+.profilepic {
+    border-radius: 50%;
+}
 nav {
     text-align: left;
     border: 2px;

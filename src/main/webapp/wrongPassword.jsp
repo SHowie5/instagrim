@@ -1,10 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : Sep 28, 2014, 7:01:44 PM
-    Author     : Administrator
---%>
-
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
 <!DOCTYPE html>
@@ -17,7 +10,7 @@
     <body>
         <header>
             <h1>InstaGrim ! </h1>
-            <h2>Your world in Black and White</h2>
+            <h2>Password was unacceptable please try again!</h2>
         </header>
         <nav>
             <ul>
@@ -31,6 +24,9 @@
                 <li><a href="/Instagrim/Profile/<%=lg.getUsername()%>">My Profile</a></li>
                 <li><a href="/Instagrim/Images/<%=lg.getUsername()%>">Your Images</a></li>
                 <li><a href="upload.jsp">Upload</a></li>
+                <form action="${pageContext.request.contextPath}/Logout" method="POST">
+                    <li><input type="submit" value="Logout"</li>
+                </form>
                     <%}
                             }else{
                                 %>
@@ -45,7 +41,6 @@
         <footer>
             <ul>
                 <li class="footer"><a href="/Instagrim">Home</a></li>
-                <li>&COPY; Andy C</li>
             </ul>
         </footer>
     </body>
